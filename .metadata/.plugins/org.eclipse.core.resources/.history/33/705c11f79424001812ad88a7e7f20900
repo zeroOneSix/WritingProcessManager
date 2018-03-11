@@ -1,0 +1,16 @@
+package com.writing.management.WPM.subscribers.drafts;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.management.WPM.events.drafts.PoetryDocumentToDraftEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+import com.writing.registry.WritingPieceRegistry;
+
+public class PoetryToDraftSubscriber extends DocumentToDraftSubscriber {
+}

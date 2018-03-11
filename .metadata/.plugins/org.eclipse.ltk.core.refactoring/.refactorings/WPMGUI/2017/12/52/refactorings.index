@@ -1,0 +1,36 @@
+1514381120765	Rename type 'Text'
+1514381506035	Rename local variable 'text'
+1514382390841	Rename type 'TransformationsExample'
+1514668779921	Rename package 'com.writing.GUI.WMP'
+1514668796720	Move compilation unit
+1514668805711	Delete element
+1514669086835	Move file
+1514669097853	Rename resource 'WPMGUI.fxml'
+1514669161313	Move package
+1514669300435	Delete element
+1514670496179	Delete element
+1514675830290	Rename local variable 'homePage'
+1514675911931	Rename local variable 'Stage'
+1514723832931	Rename resource 'ReviewSite.fxml'
+1514723959560	Rename type 'ReviewSiteController'
+1514725704222	Move package
+1514726655167	Rename method 'showReviewSite'
+1514729541663	Rename local variable 'reviewSite'
+1514732513249	Rename local variable 'reviewDisplay'
+1514732530309	Rename local variable 'reviewSiteStage'
+1514732551842	Rename local variable 'reviewSiteStage'
+1514732667122	Rename method 'setDialogStage'
+1514732703683	Rename method 'setDialogStage'
+1514733714930	Rename type 'ReviewItemLookup'
+1514739200401	Rename local variable 'draftDisplay'
+1514739213428	Rename local variable 'draftDisplayStage'
+1514739253830	Rename method 'setdraftDisplayStage'
+1514747916545	Move compilation unit
+1514747927139	Move compilation unit
+1514748364449	Rename field 'draftDisplayStage'
+1514749469579	Rename local variable 'submissionModels'
+1514750265165	Rename local variable 'submissionsDisplay'
+1514750296220	Rename local variable 'submissionDisplayStage'
+1514750327901	Rename field 'submissionDisplayStage'
+1514750357559	Rename method 'setSubmissionDisplayStage'
+1514753118683	Rename local variable 'submissionRejectedDisplayStage'

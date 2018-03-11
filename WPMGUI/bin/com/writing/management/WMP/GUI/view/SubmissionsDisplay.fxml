@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="499.0" prefWidth="754.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.writing.management.WMP.GUI.view.SubmissionDisplayController">
+   <children>
+      <TableView fx:id="submissionsDisplayTable" prefHeight="448.0" prefWidth="738.0">
+        <columns>
+          <TableColumn fx:id="writingPieceColumn" prefWidth="241.0" text="Piece Submitted" />
+          <TableColumn fx:id="submissionDateColumn" prefWidth="151.0" text="Date Submitted" />
+            <TableColumn fx:id="submissionNameColumn" prefWidth="360.0" text="Magazine Submitted" />
+        </columns>
+      </TableView>
+      <Button layoutX="228.0" layoutY="454.0" mnemonicParsing="false" onAction="#handleAcceptSubmission" text="Accept" />
+      <Button layoutX="449.0" layoutY="454.0" mnemonicParsing="false" onAction="#handleRejectSubmission" text="Reject" />
+    </children>
+</AnchorPane>

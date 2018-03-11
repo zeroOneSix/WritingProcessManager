@@ -1,0 +1,102 @@
+package com.writing.management.WPM.registry;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bson.BsonDocument;
+import org.bson.BsonString;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.management.WPM.registry.WPMDocuments.factory.WritingPieceFactory;
+import com.writing.management.tool.WPMTools.MongoDbSettings;
+
+public class WritingPieceRegistry extends Registry {
+	
+	private static MongoDatabase database;
+	
+	public WritingPieceRegistry(MongoDatabase database) {
+		this.database = database;
+	}
+	
+	public static void insert(WritingPiece wp) {
+		MongoCollection<Document> collection = database.getCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+		if (exists(collection, wp)){
+			System.out.println(wp.getName() + " already exists in Writing Piece Registry");
+		}else{
+			System.out.println(" Adding new record to Writing Piece Registry: " + wp.getName() + " " + wp.getPath().toString());
+			ObjectId id = ObjectId.get();
+			String type = wp.getWritingType().toString();
+			String status = wp.getStatus().toString();
+			String path = wp.getPath().toString();
+			Document document = new Document("id", id)
+					.append("name",wp.getName())
+					.append("type", type)
+					.append("status", status)
+					.append("path", path);
+			collection.insertOne(document);
+			}	
+	}
+	
+	public static Set<WritingPiece> getItemsByStatus(Status writingStatus) {
+		Set<WritingPiece> writingPieces = new HashSet<WritingPiece>();
+		MongoCollection<Document> collection = database.getCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+		FindIterable<Document> iterDoc = collection.find(new BsonDocument("status", new BsonString(writingStatus.toString())));
+		MongoCursor<Document> iterator = iterDoc.iterator();
+		while(iterator.hasNext()) {
+			Document d = iterator.next();
+			ObjectId id = d.getObjectId("id");
+			WritingPiece wp = WritingPieceFactory.create(d.get("name").toString(), d.get("status").toString(), d.get("type").toString(), d.get("path").toString(), id.toString());
+			writingPieces.add(wp);
+		}
+		return writingPieces;
+	}
+	
+	/**
+	 * Updates the passed WritingPiece's path and status
+	 * @param wp the writingpiece to be updated
+	 */
+	public static void updateWritingPiece(WritingPiece wp) {
+		//TODO Implement some sort of update request system
+		ObjectId id = new ObjectId(wp.getdbID());
+		MongoCollection<Document> collection = database.getCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+		Bson filter = new Document("id", id);
+		Bson updateValues = new Document("path", wp.getPath().toString()).append("status", wp.getStatus().toString());
+		Bson updateWritingPieceDocument = new Document("$set", updateValues);
+		collection.updateMany(filter, updateWritingPieceDocument);
+	}
+	public static WritingPiece getWritingPieceByID(String ID) {
+		ObjectId id = new ObjectId(ID);
+		return getWritingPieceByObjectID(id);
+	}
+	
+	public static WritingPiece getWritingPieceByObjectID(ObjectId id) {
+		MongoCollection<Document> collection = database.getCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+		BasicDBObject query = new BasicDBObject();
+		query.put("id", id);
+		FindIterable<Document> iterDoc = collection.find(query);
+		Document d = iterDoc.first();
+		return WritingPieceFactory.create(d.getString("name"), d.getString("status"), d.getString("type"), d.getString("path"), d.getObjectId("id").toString());
+		
+	}
+	private static boolean exists(MongoCollection<Document> collection, WritingPiece wp) {
+		long count = collection.count(new BsonDocument("name", new BsonString(wp.getName().toString())));
+		if(count > 0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+
+}

@@ -1,0 +1,72 @@
+package com.writing.management.WMP.GUI.lookups;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
+
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.management.WMP.GUI.model.GeneralSubmissionModel;
+import com.writing.management.WMP.GUI.model.SubmissionModel;
+import com.writing.management.WMP.GUI.model.SubmissionPublishedModel;
+import com.writing.management.WMP.GUI.model.SubmissionRejectedModel;
+import com.writing.registry.SubmissionRegistry;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+public class SubmissionsLookUp {
+
+	public static ObservableList<? extends GeneralSubmissionModel> getItems(SubmittedResponse response) {
+		return submissionsToSubmissionModelConverter(getSubbmissionItemsFromDB(response), response);
+	}
+	
+	private static ObservableList<GeneralSubmissionModel> submissionsToSubmissionModelConverter(Set<Submission> submissions, SubmittedResponse response){
+		ObservableList<GeneralSubmissionModel> generalSubmissionModels = FXCollections.observableArrayList();
+		try {
+			if(response.equals(SubmittedResponse.PENDING)) {
+				for(Submission s : submissions) {
+					String submissionName = s.getSubmissionName();
+					String[] splitString = submissionName.split("_");
+					LocalDate date = parseDate(splitString[0]);
+					SubmissionModel submissionModel = new SubmissionModel(s.getSubmissionName(),splitString[1], s.getPieceSubmitted().getName(), date);
+					generalSubmissionModels.add(submissionModel);
+				}
+			}else if(response.equals(SubmittedResponse.REJECTED)) {
+				for(Submission s : submissions) {
+					String submissionName = s.getSubmissionName();
+					String[] splitString = submissionName.split("_");
+					LocalDate date = parseDate(splitString[0]);
+					//TODO Instead of passing null for the rejected date...change structure to include rejected date
+					SubmissionRejectedModel submissionModel = new SubmissionRejectedModel(s.getSubmissionName(),splitString[1], s.getPieceSubmitted().getName(), date, null);
+					generalSubmissionModels.add(submissionModel);
+				}
+			}else if(response.equals(SubmittedResponse.ACCEPTED)) {
+				for(Submission s : submissions) {
+					String submissionName = s.getSubmissionName();
+					String[] splitString = submissionName.split("_");
+					LocalDate date = parseDate(splitString[0]);
+					//TODO Instead of passing null for the accepted date...change structure to include rejected date
+					SubmissionPublishedModel submissionModel = new SubmissionPublishedModel(s.getSubmissionName(),splitString[1], s.getPieceSubmitted().getName(), date, null);
+					generalSubmissionModels.add(submissionModel);
+				}
+			}else {
+				throw new Exception("Wrong Repsonse send to submission lookup!");
+			}
+			return generalSubmissionModels;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return generalSubmissionModels;
+		}
+	}
+	
+	private static LocalDate parseDate(String s) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		return LocalDate.parse(s, formatter);
+	}
+	private static Set<Submission> getSubbmissionItemsFromDB(SubmittedResponse response) {
+		return SubmissionRegistry.getAllSubmittedItemsByResponse(response);
+	}
+	
+
+}

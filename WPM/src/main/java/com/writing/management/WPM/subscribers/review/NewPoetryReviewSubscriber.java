@@ -1,0 +1,17 @@
+package com.writing.management.WPM.subscribers.review;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WPM.events.review.NewPoetryForReviewEvent;
+
+public class NewPoetryReviewSubscriber {
+
+	@Subscribe
+	public void handleNewPoetryPiece(NewPoetryForReviewEvent event) {
+		System.out.println("Handling new poetry event");
+		WritingPiece newPiece = new WritingPiece(
+				event.getPath().toFile().getName(), Status.DOCUMENT_FOR_REVIEW, WritingType.POEM, event.getPath());
+	}
+}

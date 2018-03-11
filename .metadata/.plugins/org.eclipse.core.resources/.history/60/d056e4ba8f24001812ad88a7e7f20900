@@ -1,0 +1,12 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import com.writing.management.WPM.submission.event.PoetryDraftToReadyForSubmissionEvent;
+
+public class PoetryDraftToReadyForSubmissionSubscriber extends DocumentDraftToReadyForSubmissionSubscriber {
+	
+	public void movedDraftToSubmission(PoetryDraftToReadyForSubmissionEvent event) {
+		createSubmission(event.getSubmission());
+//		SubmissionRegistry.addToRegistry(submission);
+	}
+
+}

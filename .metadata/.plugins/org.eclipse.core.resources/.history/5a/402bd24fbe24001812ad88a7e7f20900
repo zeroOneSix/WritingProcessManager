@@ -1,0 +1,21 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+
+import com.writing.documents.Submission;
+import com.writing.management.WPM.events.submissions.FictionSubmissionAcceptedEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public class FictionSubmissionToPublishedSubscriber extends DocumentSubmissionToPublishedSubscriber {
+
+	public void published(FictionSubmissionAcceptedEvent event) {
+		Submission submission = event.getSubmission();
+		String baseTargetDir = DirectoryLocations.getPublishedFictionFolder();
+		try {
+			acceptSubmission(submission, baseTargetDir);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+}

@@ -1,0 +1,8 @@
+package com.writing.mangement.WPM.install.traverse;
+
+public abstract class ScanDirectory {
+
+	public static void traverseFictionDir() {};
+	
+	public static void traversePoetryDir() {};
+}

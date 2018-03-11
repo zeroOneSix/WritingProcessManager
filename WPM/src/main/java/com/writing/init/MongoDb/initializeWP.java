@@ -1,0 +1,29 @@
+package com.writing.init.MongoDb;
+
+import com.writing.management.tool.WPMTools.MongoDbSettings;
+import com.writing.registry.SubmissionRegistry;
+import com.writing.registry.WritingPieceRegistry;
+import com.writing.registry.mongoDb.CreateDatabase;
+
+public class initializeWP {
+
+	public static void init() {
+	//SETUP DATABASE
+	CreateDatabase database = new CreateDatabase(
+			MongoDbSettings.getHOST(), 
+			MongoDbSettings.getPORT(), 
+			MongoDbSettings.getUSERNAME(), 
+			MongoDbSettings.getPASSWORD(),
+			MongoDbSettings.getDB_NAME());
+	
+	//TODO Add functionality to control the creation of colllections
+	//Create Writing Piece Collection
+//	database.createCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+	//Create Submission Collection
+//	database.createCollection(MongoDbSettings.getSUBMISSIONS_COLLECTION());
+	
+	//Writing Piece Reg
+	WritingPieceRegistry writingReg = new WritingPieceRegistry(CreateDatabase.getMongoDatabase());
+	SubmissionRegistry subReg = new SubmissionRegistry(CreateDatabase.getMongoDatabase());
+	}
+}

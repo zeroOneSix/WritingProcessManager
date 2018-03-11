@@ -1,0 +1,10 @@
+package com.writing.management.WPM.events.submissions;
+
+import com.writing.documents.WritingPiece;
+import com.writing.management.WPM.events.WritingPieceEvent;
+
+public abstract class DraftToReadyForSubmissionEvent extends WritingPieceEvent{
+	DraftToReadyForSubmissionEvent(WritingPiece wp){
+		super(wp);
+	}
+}

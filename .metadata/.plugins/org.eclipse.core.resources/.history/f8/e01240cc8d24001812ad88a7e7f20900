@@ -1,0 +1,8 @@
+package com.writing.registry;
+
+import com.writing.documents.WPMDocument;
+
+public abstract class Registry {
+	public void insert(WPMDocument wpmDocument) {
+	}
+}

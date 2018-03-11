@@ -1,0 +1,9 @@
+package com.writing.management.WPM.events.submissions;
+
+import com.writing.documents.Submission;
+
+public class FictionSubmissionRejectedEvent extends DocumentSubmissionRejectedEvent {
+	public FictionSubmissionRejectedEvent(Submission s) {
+		super(s);
+	}
+}

@@ -1,0 +1,134 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.documents.WritingPiece;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public abstract class DocumentDraftToReadyForSubmissionSubscriber {
+
+	//TODO Rework the DraftToSubmission Subscriber to take into account new API
+	protected void createSubmission(Submission submission) {
+		Path p = submission.getPieceSubmitted().getPath();
+		Path submittedFile = traverseDocumentsForDrafting(p);
+		
+		
+//		Submission newSubmission = new Submission();
+//		newSubmission.setMagazineName(submission.magazineName);
+//		newSubmission.setPieceSubmitted(wp);
+//		newSubmission.setSubmittedResponse(SubmittedResponse.PENDING);
+//		
+//		String[] dirs = copyFinalFile(submittedFile, magazineName);
+//		newSubmission.setSubmissionLocation(dirs[1]);
+//		newSubmission.setSubmissionName(dirs[0]);
+		
+	}
+	
+	protected void processSubmission(Submission submission) {
+		Path currentDraftDirLocation = submission.getPieceSubmitted().getPath();
+		Path currentDraftLocation = getDocumentFromDraftDirectory(currentDraftDirLocation);
+		
+	}
+	
+	private Path getDocumentFromDraftDirectory(Path path) {
+		/**
+		 * This traversion looks for a document _FINAL in the directory of the
+		 * path given. It will add the file to a String Array and terminate the search
+		 * once found, passing back the path location of the actual document.
+		 * TODO Find a better and more fullproof way of handling the drafts
+		 * i.e. create a stage between drafts and new submissions.
+		 */
+		
+		final String[] submittedFile = new String [1];
+		SimpleFileVisitor<Path> fv = new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+			throws IOException{
+				String fileName = file.getFileName().toString();
+				int i = fileName.lastIndexOf(".");
+				fileName = fileName.substring(0, i);
+				
+				if(fileName.endsWith("_FINAL")) {
+					submittedFile[0] = file.toString();
+					return FileVisitResult.TERMINATE;
+				}else {
+					return FileVisitResult.CONTINUE;
+				}
+			}
+		};
+		 try {
+		    	Files.walkFileTree(path, fv);
+		    }catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+		 
+		Path submissionFilePath = Paths.get(submittedFile[0]);
+		return submissionFilePath;
+	}
+	
+	
+	private Path traverseDocumentsForDrafting(final Path path){
+		final String[] submittedFile = new String [1];
+		SimpleFileVisitor<Path> fv = new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+			throws IOException{
+				String fileName = file.getFileName().toString();
+				int i = fileName.lastIndexOf(".");
+				fileName = fileName.substring(0, i);
+				
+				if(fileName.endsWith("_FINAL")) {
+					submittedFile[0] = file.toString();
+					return FileVisitResult.TERMINATE;
+				}else {
+					return FileVisitResult.CONTINUE;
+				}
+			}
+		};
+		 try {
+		    	Files.walkFileTree(path, fv);
+		    }catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+		 
+		Path submissionFilePath = Paths.get(submittedFile[0]);
+		return submissionFilePath;
+	}
+	private String[] copyFinalFile(Path submittedFile, String magazineName) {
+		
+		Date date = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		String dateFormatted = dateFormat.format(date);
+		String dirName = dateFormatted + magazineName;
+		String submittedDir = DirectoryLocations.getSubmittedFictionDocumentsFolder();
+		String newDir = submittedDir + "\\" + dirName;
+		
+		try {
+			if(!Paths.get(newDir).toFile().exists()) {
+				Path createdDir = Files.createDirectories(Paths.get(newDir));
+				if(createdDir.toFile().exists()) {
+				String target = createdDir.toString() + "\\"+ submittedFile.toFile().getName();
+				Files.copy(submittedFile, Paths.get(target));
+				}else {
+				throw new IOException("Directory wasnt created");
+					}
+				}
+			}catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String [] dirs = {dirName, newDir};
+		return dirs;
+
+	}
+}

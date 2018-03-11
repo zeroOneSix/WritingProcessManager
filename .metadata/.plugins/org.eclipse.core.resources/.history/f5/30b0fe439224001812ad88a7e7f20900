@@ -1,0 +1,10 @@
+package com.writing.management.WPM.events.drafts;
+
+import com.writing.documents.WritingPiece;
+import com.writing.management.WPM.events.WPEvent;
+
+public abstract class DocumentToDraftEvent extends WPEvent {
+	public DocumentToDraftEvent(WritingPiece wp){
+		super(wp);
+	}
+}

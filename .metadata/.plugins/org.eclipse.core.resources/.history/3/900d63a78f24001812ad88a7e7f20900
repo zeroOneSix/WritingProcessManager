@@ -1,0 +1,9 @@
+package com.writing.management.WPM.Drafting.event;
+
+import com.writing.documents.WritingPiece;
+
+public class FictionDocumentToDraftEvent extends DocumentToDraftEvent {
+	public FictionDocumentToDraftEvent(WritingPiece wp) {
+		super(wp);
+	}
+}

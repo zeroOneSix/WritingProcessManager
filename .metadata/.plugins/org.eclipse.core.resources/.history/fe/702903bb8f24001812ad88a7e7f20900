@@ -1,0 +1,11 @@
+package com.writing.management.WPM.submission.event;
+
+import com.writing.documents.Submission;
+
+public class FictionNewSubmissionEvent extends DocumentNewSubmissionEvent {
+
+	public FictionNewSubmissionEvent(Submission s) {
+		super(s);
+	}
+
+}

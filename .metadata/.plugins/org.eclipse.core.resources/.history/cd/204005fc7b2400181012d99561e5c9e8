@@ -1,0 +1,44 @@
+package com.writing.mangement.WPM.install.traverse.Submissions;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.writing.management.WPM.registry.SubmissionRegistry;
+import com.writing.management.WPM.registry.WPMDocuments.Status;
+import com.writing.management.WPM.registry.WPMDocuments.Submission;
+import com.writing.management.WPM.registry.WPMDocuments.SubmittedResponse;
+import com.writing.management.WPM.registry.WPMDocuments.WritingPiece;
+import com.writing.management.WPM.registry.WPMDocuments.factory.SubmissionFactory;
+import com.writing.management.WPM.registry.WPMDocuments.factory.WritingPieceFactory;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public class ScanSubmittedDocumentsDirectory extends ScanSubmissionDirectory{
+
+	protected static Set<Path> traverse(Path path) {
+		final Set<Path> discoveredPaths = new HashSet<Path>();
+		SimpleFileVisitor<Path> fv = new SimpleFileVisitor<Path>() {
+			 @Override
+		      public FileVisitResult preVisitDirectory(Path file, BasicFileAttributes attrs)
+		          throws IOException {	
+				
+				 if(!file.toString().equals(DirectoryLocations.getSubmittedFictionDocumentsFolder()) && !file.toString().equals(DirectoryLocations.getSubmittedPoetryDocumentsFolder())) {
+					 discoveredPaths.add(file);
+					 }				
+				 return FileVisitResult.CONTINUE;
+		      }
+		    };
+		    try {
+		    	Files.walkFileTree(path, fv);
+		    }catch(IOException e) {
+		    	e.printStackTrace();
+		    }
+			return discoveredPaths;
+	}	
+}

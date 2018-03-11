@@ -1,0 +1,318 @@
+package com.writing.management.WMP.GUI;
+
+import java.io.IOException;
+
+import com.google.common.eventbus.EventBus;
+import com.writing.WPM;
+import com.writing.init.MongoDb.initializeWP;
+import com.writing.management.WMP.GUI.model.DraftModel;
+import com.writing.management.WMP.GUI.model.ReadyForSubmissionModel;
+import com.writing.management.WMP.GUI.view.DraftDisplayController;
+import com.writing.management.WMP.GUI.view.FinalizeDraftDisplayController;
+import com.writing.management.WMP.GUI.view.NewSubmissionController;
+import com.writing.management.WMP.GUI.view.ReadyForSubmissionDisplayController;
+import com.writing.management.WMP.GUI.view.ReviewDisplayController;
+import com.writing.management.WMP.GUI.view.StartSiteController;
+import com.writing.management.WMP.GUI.view.SubmissionDisplayController;
+import com.writing.management.WMP.GUI.view.SubmissionPublishedDisplayController;
+import com.writing.management.WMP.GUI.view.SubmissionRejectedDisplayController;
+import com.writing.management.WPM.events.WritingPieceEvent;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class MainApp extends Application {
+
+	private Stage primaryStage;
+	private BorderPane rootLayout;
+	private EventBus eventBus;
+	
+	public MainApp() {
+		//Connect to Database 
+		initializeWP.init();
+	}
+	
+	@Override
+	public void start(Stage primaryStage) {
+		this.primaryStage = primaryStage;
+		this.primaryStage.setTitle("Writing Process Manager");
+		initRootLayout();
+		showMainPage();
+		this.eventBus = WPM.init();
+	}	
+	
+	private void initRootLayout() {
+		try {
+			//Load root layout from fxml file
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+			rootLayout = (BorderPane) loader.load();
+			//Show the scene containing the root layout
+			Scene scene = new Scene(rootLayout);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void showMainPage() {
+		try {
+			// Load person overview
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/StartSite.fxml"));
+			AnchorPane homePage;
+			homePage = (AnchorPane) loader.load();
+			//Set Person Overview into the center of rootlayout
+			rootLayout.setCenter(homePage);
+			
+			//Give the controller access to the main app
+			StartSiteController controller = loader.getController();
+			controller.setMainApp(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void showReviewDisplay() {
+		try {
+			// Load person overview
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/ReviewDisplay.fxml"));
+			AnchorPane reviewDisplay;
+			reviewDisplay = (AnchorPane) loader.load();
+			
+			 // Create the dialog Stage.
+	        Stage reviewDisplayStage = new Stage();
+	        reviewDisplayStage.setTitle("Writing Items for Review");
+	        reviewDisplayStage.initModality(Modality.WINDOW_MODAL);
+	        reviewDisplayStage.initOwner(primaryStage);
+	        Scene scene = new Scene(reviewDisplay);
+	        reviewDisplayStage.setScene(scene);
+	       
+	        // Set the person into the controller.
+	        ReviewDisplayController controller = loader.getController();
+	        controller.setMainApp(this);
+	        controller.setReviewDisplayStage(reviewDisplayStage);
+	        // Show the dialog and wait until the user closes it
+	        reviewDisplayStage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void showDraftDisplay() {
+		try {
+			// Load person overview
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/DraftDisplay.fxml"));
+			AnchorPane draftDisplay;
+			draftDisplay = (AnchorPane) loader.load();
+			
+			 // Create the dialog Stage.
+	        Stage draftDisplayStage = new Stage();
+	        draftDisplayStage.setTitle("Draft Writing Items");
+	        draftDisplayStage.initModality(Modality.WINDOW_MODAL);
+	        draftDisplayStage.initOwner(primaryStage);
+	        Scene scene = new Scene(draftDisplay);
+	        draftDisplayStage.setScene(scene);
+	       
+	        // Set the person into the controller.
+	        DraftDisplayController controller = loader.getController();
+	        controller.setMainApp(this);
+	        controller.setdraftDisplayStage(draftDisplayStage);
+	        // Show the dialog and wait until the user closes it
+	        draftDisplayStage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+		
+	}
+	public boolean showFinalizeDraftDisplay(DraftModel draftModelSelected) {
+		try {
+		// Load FinalizeDisplay FXML
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(MainApp.class.getResource("view/FinalizeDraftDisplay.fxml"));
+		AnchorPane finalizeDraftDisplay;
+		finalizeDraftDisplay = (AnchorPane) loader.load();
+					
+		 // Create the dialog Stage.
+		 Stage finalizeDraftDisplayStage = new Stage();
+		finalizeDraftDisplayStage.setTitle("Select Draft Writing Items");
+		finalizeDraftDisplayStage.initModality(Modality.WINDOW_MODAL);
+		finalizeDraftDisplayStage.initOwner(primaryStage);
+		 Scene scene = new Scene(finalizeDraftDisplay);
+		finalizeDraftDisplayStage.setScene(scene);
+			       
+		// Set the controller.
+		FinalizeDraftDisplayController controller = loader.getController();
+		controller.setMainApp(this);
+		controller.setFinalizeDraftDisplayStage(finalizeDraftDisplayStage);
+		controller.setDraftSelected(draftModelSelected);
+		// Show the dialog and wait until the user closes it
+		finalizeDraftDisplayStage.showAndWait();
+		return controller.selected();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}	
+	}
+	public void showReadyForSubmissionDisplay() {
+		try {
+			// Load person overview
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/ReadyForSubmissionDisplay.fxml"));
+			AnchorPane readyForSubmissionDisplay;
+			readyForSubmissionDisplay = (AnchorPane) loader.load();
+			
+			 // Create the dialog Stage.
+	        Stage readyForSubmissionDisplayStage = new Stage();
+	        readyForSubmissionDisplayStage.setTitle("Documents Ready for Submission");
+	        readyForSubmissionDisplayStage.initModality(Modality.WINDOW_MODAL);
+	        readyForSubmissionDisplayStage.initOwner(primaryStage);
+	        Scene scene = new Scene(readyForSubmissionDisplay);
+	        readyForSubmissionDisplayStage.setScene(scene);
+	       
+	        // Set the person into the controller.
+	        ReadyForSubmissionDisplayController controller = loader.getController();
+	        controller.setMainApp(this);
+	        controller.setReadyForSubmissionDisplayStage(readyForSubmissionDisplayStage);
+	        // Show the dialog and wait until the user closes it
+	        readyForSubmissionDisplayStage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean showNewSubmissionDisplay(ReadyForSubmissionModel selectedDraft) {
+		try {
+		// Load person overview
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(MainApp.class.getResource("view/NewSubmissionForm.fxml"));
+		AnchorPane newSubmissionDisplay;
+		newSubmissionDisplay = (AnchorPane) loader.load();
+					
+		 // Create the dialog Stage.
+		Stage newSubmissionDialogStage = new Stage();
+		newSubmissionDialogStage.setTitle("Create New Submission");
+		newSubmissionDialogStage.initModality(Modality.WINDOW_MODAL);
+		newSubmissionDialogStage.initOwner(primaryStage);
+		Scene scene = new Scene(newSubmissionDisplay);
+		newSubmissionDialogStage.setScene(scene);
+			       
+		// Set the person into the controller.
+		NewSubmissionController controller = loader.getController();
+		controller.setMainApp(this);
+		controller.setNewSubmissionDialogStage(newSubmissionDialogStage);
+		controller.setDraftForSubmission(selectedDraft);
+		// Show the dialog and wait until the user closes it
+		newSubmissionDialogStage.showAndWait();
+		return controller.newCreated();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}	
+	}
+	
+	public void showSubmissionDisplay() {
+		try {
+			// Load person overview
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/SubmissionsDisplay.fxml"));
+			AnchorPane submissionsDisplay;
+			submissionsDisplay = (AnchorPane) loader.load();
+			
+			 // Create the dialog Stage.
+	        Stage submissionDisplayStage = new Stage();
+	        submissionDisplayStage.setTitle("Writing Items Submitted");
+	        submissionDisplayStage.initModality(Modality.WINDOW_MODAL);
+	        submissionDisplayStage.initOwner(primaryStage);
+	        Scene scene = new Scene(submissionsDisplay);
+	        submissionDisplayStage.setScene(scene);
+	       
+	        // Set the person into the controller.
+	        SubmissionDisplayController controller = loader.getController();
+	        controller.setMainApp(this);
+	        controller.setSubmissionDisplayStage(submissionDisplayStage);
+	        // Show the dialog and wait until the user closes it
+	        submissionDisplayStage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+		
+	}
+	
+	public void showSubmissionRejectedDisplay() {
+		try {
+		// Load person overview
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(MainApp.class.getResource("view/RejectedSubmissionsDisplay.fxml"));
+		AnchorPane submissionsRejectedDisplay;
+		submissionsRejectedDisplay = (AnchorPane) loader.load();
+					
+		// Create the dialog Stage.
+		Stage submissionRejectedDisplayStage = new Stage();
+		submissionRejectedDisplayStage.setTitle("Writing Items Rejected");
+		submissionRejectedDisplayStage.initModality(Modality.WINDOW_MODAL);
+		submissionRejectedDisplayStage.initOwner(primaryStage);
+		Scene scene = new Scene(submissionsRejectedDisplay);
+		submissionRejectedDisplayStage.setScene(scene);
+			       
+		// Set the person into the controller.
+		SubmissionRejectedDisplayController controller = loader.getController();
+		controller.setMainApp(this);
+		controller.setSubmissionRejectedDisplayStage(submissionRejectedDisplayStage);
+		// Show the dialog and wait until the user closes it
+		submissionRejectedDisplayStage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	public void showSubmissionPublishedDisplay() {
+		try {
+		// Load person overview
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(MainApp.class.getResource("view/PublishedSubmissionsDisplay.fxml"));
+		AnchorPane submissionsPublishedDisplay;
+		submissionsPublishedDisplay = (AnchorPane) loader.load();
+					
+		// Create the dialog Stage.
+		Stage submissionPublishedDisplayStage = new Stage();
+		submissionPublishedDisplayStage.setTitle("Published Writing Items");
+		submissionPublishedDisplayStage.initModality(Modality.WINDOW_MODAL);
+		submissionPublishedDisplayStage.initOwner(primaryStage);
+		Scene scene = new Scene(submissionsPublishedDisplay);
+		submissionPublishedDisplayStage.setScene(scene);
+			       
+		// Set the person into the controller.
+		SubmissionPublishedDisplayController controller = loader.getController();
+		controller.setMainApp(this);
+		controller.setSubmissionPublishedDisplayStage(submissionPublishedDisplayStage);
+		// Show the dialog and wait until the user closes it
+		submissionPublishedDisplayStage.showAndWait();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void showSettingsDisplay() {
+		// TODO Create Settings Display
+	}
+	public Stage getPrimaryStage() {
+		return primaryStage;
+	}
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+	public void postEvent(WritingPieceEvent e) {
+		eventBus.post(e);
+	}
+	public static void main(String[] args) {
+		launch(args);
+	}
+}

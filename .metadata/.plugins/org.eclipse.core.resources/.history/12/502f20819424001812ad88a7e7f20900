@@ -1,0 +1,72 @@
+package com.writing.management.WMP.GUI.view;
+
+import com.writing.documents.Status;
+import com.writing.management.WMP.GUI.MainApp;
+import com.writing.management.WMP.GUI.lookups.ItemLookup;
+import com.writing.management.WMP.GUI.model.ReadyForSubmissionModel;
+
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+
+public class ReadyForSubmissionDisplayController {
+
+	@FXML
+	private TableView<ReadyForSubmissionModel> readyForSubmissionDisplayTable;
+	@FXML
+	private TableColumn<ReadyForSubmissionModel, String> writingNameColumn;
+    @FXML
+    private TableColumn<ReadyForSubmissionModel, String> writingTypeColumn;
+    
+	private MainApp mainApp;
+	private Stage readyForSubmissionDisplayStage;
+	
+	public ReadyForSubmissionDisplayController() {
+	}
+	public void initialize() {
+		writingNameColumn.setCellValueFactory(cellData -> cellData.getValue().getWritingPieceName());
+		writingTypeColumn.setCellValueFactory(cellData -> cellData.getValue().getWritingPieceTypeAsStringProperty());
+		
+	}
+	
+    public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+		ObservableList<ReadyForSubmissionModel> allItems = getItems();
+		readyForSubmissionDisplayTable.setItems(allItems);
+	}
+    
+    @FXML
+    private void handleCreateNewSubmissionEvent() {
+    	ReadyForSubmissionModel selectedDraft = readyForSubmissionDisplayTable.getSelectionModel().getSelectedItem();
+		int tableIndexOfSelectedDraft = readyForSubmissionDisplayTable.getSelectionModel().getSelectedIndex();
+		if(selectedDraft != null) {
+			boolean newCreated = mainApp.showNewSubmissionDisplay(selectedDraft);
+			if(newCreated == true) {
+				readyForSubmissionDisplayTable.getItems().remove(tableIndexOfSelectedDraft);
+			}
+		}else {
+			//Nothing Selected
+			//TODO Create a static class to display warnings like this
+    		Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Document Selected");
+            alert.setContentText("Please select a document from the table.");
+
+            alert.showAndWait();
+		}
+    }
+    
+	public void setReadyForSubmissionDisplayStage(Stage readyForSubmissionDisplayStage) {
+		this.readyForSubmissionDisplayStage = readyForSubmissionDisplayStage;
+	}
+	
+	private ObservableList<ReadyForSubmissionModel> getItems(){
+		ObservableList<ReadyForSubmissionModel> readyForSubmissionModels = (ObservableList<ReadyForSubmissionModel>) ItemLookup.getItems(Status.READY_FOR_SUBMISSION);
+		return readyForSubmissionModels;
+	}
+}

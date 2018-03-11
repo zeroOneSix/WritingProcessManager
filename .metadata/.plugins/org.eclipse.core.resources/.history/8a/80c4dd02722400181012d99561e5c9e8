@@ -1,0 +1,10 @@
+package com.writing.mangement.WPM.install.traverse;
+
+import java.nio.file.Path;
+import java.util.Set;
+
+public interface ScanDirectory {
+	void traverse(String dir);
+
+	void addToReg(Set<Path> paths);
+}

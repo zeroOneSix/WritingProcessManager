@@ -1,0 +1,55 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Status;
+import com.writing.documents.Submission;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WPM.events.submissions.DocumentNewSubmissionEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+import com.writing.registry.SubmissionRegistry;
+import com.writing.registry.WritingPieceRegistry;
+
+public class DocumentNewSubmissionSubscriber {
+
+	private Submission submission;
+	
+	@Subscribe
+	public void create(DocumentNewSubmissionEvent event) {
+		this.submission = event.getSubmission();
+		createSubmittedPacket();
+		SubmissionRegistry.insert(submission);
+	}
+	
+	private void createSubmittedPacket() {
+		try {
+		WritingPiece pieceToSubmit = submission.getPieceSubmitted();
+		Path pieceLocation = pieceToSubmit.getPath();
+		String targetLocationDir;
+		if(pieceToSubmit.getWritingType() == WritingType.FICTION) {
+			targetLocationDir = DirectoryLocations.getSubmittedFictionDocumentsFolder();
+		}else {
+			targetLocationDir = DirectoryLocations.getSubmittedPoetryDocumentsFolder();
+		}
+		String newSubmission = targetLocationDir + "\\" + submission.getSubmissionName();
+		submission.setSubmissionLocation(newSubmission);
+		Path newDir = Files.createDirectories(Paths.get(newSubmission));
+			if(newDir !=null) {
+				String newSubmissionFile = newSubmission + "\\" + pieceToSubmit.getName() + ".docx";
+				FileUtils.copyFile(pieceToSubmit.getPath().toFile(), Paths.get(newSubmissionFile).toFile());
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+}

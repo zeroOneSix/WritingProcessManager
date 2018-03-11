@@ -1,0 +1,9 @@
+package com.writing.management.WPM.events.submissions;
+
+import com.writing.documents.WritingPiece;
+
+public class FictionDraftToReadyForSubmissionEvent extends DraftToReadyForSubmissionEvent {
+	public FictionDraftToReadyForSubmissionEvent(WritingPiece wp) {
+		super(wp);
+	}
+}

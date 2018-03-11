@@ -1,0 +1,80 @@
+package com.writing.management.WMP.GUI.view;
+
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.documents.WritingType;
+import com.writing.management.WMP.GUI.StartWPM;
+import com.writing.management.WMP.GUI.lookups.SubmissionsLookUp;
+import com.writing.management.WMP.GUI.model.SubmissionModel;
+import com.writing.management.WPM.events.factory.EventFactory;
+import com.writing.registry.SubmissionRegistry;
+
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.stage.Stage;
+
+public class SubmissionDisplayController {
+	@FXML
+	private TableView<SubmissionModel> submissionsDisplayTable;
+	@FXML
+	private TableColumn<SubmissionModel, String> submissionNameColumn;
+    @FXML
+    private TableColumn<SubmissionModel, String> writingPieceColumn;
+    @FXML
+    private TableColumn<SubmissionModel, String> submissionDateColumn;
+
+	
+	private StartWPM mainApp;
+	private Stage submissionDisplayStage;
+	
+	public SubmissionDisplayController() {
+	}
+	
+	public void initialize() {
+		submissionNameColumn.setCellValueFactory(cellData -> cellData.getValue().getSubmittedTo());
+		submissionDateColumn.setCellValueFactory(cellData -> cellData.getValue().getDateSubmittedAsStringProperty());
+		writingPieceColumn.setCellValueFactory(cellData -> cellData.getValue().getPieceSubmitted());
+		
+	}
+	
+	public void setMainApp(StartWPM mainApp) {
+		this.mainApp = mainApp;
+		submissionsDisplayTable.setItems(getItems());
+	}
+
+	public void setSubmissionDisplayStage(Stage draftDisplayStage) {
+		this.submissionDisplayStage = draftDisplayStage;
+	}
+	
+	@FXML
+	private void handleAcceptSubmission() {
+		SubmissionModel selectedSubmission = submissionsDisplayTable.getSelectionModel().getSelectedItem();
+		try {
+			if(selectedSubmission != null) {
+				Submission acceptedSubmission = SubmissionRegistry.getSubmissionByID(selectedSubmission.getDbIDAsString());
+				if(acceptedSubmission.getPieceSubmitted().getWritingType() == WritingType.FICTION) {
+					mainApp.postEvent(EventFactory.getFictionSubmissionAcceptedEvent(acceptedSubmission));
+				}else if(acceptedSubmission.getPieceSubmitted().getWritingType() == WritingType.POEM) {
+					mainApp.postEvent(EventFactory.getFictionSubmissionRejectedEvent(acceptedSubmission));
+				}else {
+					throw new Exception("Selected Submission has now writing type");
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
+	private void handleRejectSubmission() {
+		
+	}
+	
+	private ObservableList<SubmissionModel> getItems(){
+		return (ObservableList<SubmissionModel>) SubmissionsLookUp.getItems(SubmittedResponse.PENDING);
+	}
+
+}
+

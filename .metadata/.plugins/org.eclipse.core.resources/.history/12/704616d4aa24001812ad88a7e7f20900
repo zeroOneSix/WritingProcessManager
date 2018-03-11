@@ -1,0 +1,6 @@
+package com.writing.management.WPM.subscribers.drafts;
+
+public class FictionToDraftSubscriber extends DocumentToDraftSubscriber {
+
+	
+}

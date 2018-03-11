@@ -1,0 +1,6 @@
+package com.writing.mangement.WPM.install.traverse;
+
+import com.writing.management.WPM.registry.WPMDocuments.Status;
+
+public interface ScanDirectory {
+}

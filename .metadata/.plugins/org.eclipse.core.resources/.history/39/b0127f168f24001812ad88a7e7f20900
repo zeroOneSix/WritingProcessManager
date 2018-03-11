@@ -1,0 +1,18 @@
+package com.writing.management.WPM.submission.event;
+
+import com.writing.documents.Submission;
+import com.writing.management.WPM.Utils.WPEvent;
+
+public abstract class DraftToReadyForSubmissionEvent extends WPEvent{
+	
+	private Submission submission;
+	
+	DraftToReadyForSubmissionEvent(Submission submission){
+		super(submission.getPieceSubmitted());
+		this.submission = submission;
+	}
+	
+	public Submission getSubmission() {
+		return submission;
+	}
+}

@@ -1,0 +1,141 @@
+package com.writing.management.WPM.Review;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.eventbus.EventBus;
+import com.writing.management.WPM.events.factory.EventFactory;
+import com.writing.management.WPM.events.review.NewFictionForReviewEvent;
+import com.writing.management.WPM.events.review.NewPoetryForReviewEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+import bbejeck.nio.files.directory.event.DirectoryEventWatcher;
+import bbejeck.nio.files.directory.event.PathEvent;
+import bbejeck.nio.files.directory.event.PathEvents;
+
+public class ReviewWatcherImpl implements DirectoryEventWatcher {
+	 private FutureTask<Integer> watchTask;
+	 private EventBus eventBus;
+	 private WatchService watchService;
+	 private volatile boolean keepWatching = true;
+	 private Path startPath;
+	
+	public ReviewWatcherImpl(EventBus eventBus, Path startPath) {
+		this.eventBus = eventBus;
+		this.startPath = startPath;
+	}
+	
+
+	@Override
+	public void start() throws IOException {
+		 	initWatchService();
+	        registerDirectories();
+	        createWatchTask();
+	        startWatching();
+	        System.out.println("...File Watcher Started");
+	}
+
+	@Override
+	public boolean isRunning() {
+		return watchTask != null && !watchTask.isDone();
+	}
+
+	@Override
+	public void stop() {
+		keepWatching = false;
+
+	}
+	
+	private void startWatching() {
+	     new Thread(watchTask).start();
+	}
+	
+	private void registerDirectories() throws IOException {
+		Files.walkFileTree(startPath, new WatchServiceRegisteringVisitor());
+	}
+
+	private WatchService initWatchService() throws IOException {
+	
+		if (watchService == null) {
+	    watchService = FileSystems.getDefault().newWatchService();
+		}
+	    return watchService;
+	 }
+    
+	static <T> WatchEvent<T> cast(WatchEvent<?> event) {
+        return (WatchEvent<T>)event;
+    }
+	  private void createWatchTask() {
+	        watchTask = new FutureTask<>(new Callable<Integer>() {
+	            private int totalEventCount;
+
+	            @Override
+	            public Integer call() throws Exception {
+	                while (keepWatching) {
+                	
+	                	WatchKey watchKey = watchService.poll(10, TimeUnit.SECONDS);
+	                	
+	                    if (watchKey != null) {
+	                        List<WatchEvent<?>> events = watchKey.pollEvents();
+	                        Path watched = (Path) watchKey.watchable();
+	                       
+	                                            
+	                        PathEvents pathEvents = new PathEvents(watchKey.isValid(), watched);
+	                        
+	                        for (WatchEvent event : events) {
+	                        	
+	                        	WatchEvent<Path> ev = cast(event);
+	                           	Path path = (Path) ev.context();
+	                           Path path2 = path.resolve(DirectoryLocations.getDocumentsForReviewFolder());
+	                           	
+	                        	
+	                        	if(watched.toFile().getAbsolutePath().contains("\\Fiction") && ev.kind().equals(ENTRY_CREATE)
+	                        			&& path.getFileName().toString().contains(".docx") && !path.getFileName().toString().contains("~$")){
+	                        		Path resolvedPath = path.resolve(DirectoryLocations.getDocumentsForDraftingFiction() + "\\" + path.getFileName());
+	                        		eventBus.post(EventFactory.getNewFictionForReviewEvent(resolvedPath));
+	                        		break;
+	                            }else if(watched.toFile().getAbsolutePath().contains("\\Poetry") && ev.kind().equals(ENTRY_CREATE) 
+	                            		&& path.getFileName().toString().contains(".docx") && !path.getFileName().toString().contains("~$")){
+	                            	Path resolvedPath = path.resolve(DirectoryLocations.getDocumentsForDraftingPoetry() + path.getFileName());
+	                            	eventBus.post(EventFactory.getNewPoetryForReviewEvent(resolvedPath));
+	                            	break;
+	                            }
+	                        	pathEvents.add(new PathEvent((Path) event.context(), event.kind())); 
+	                           }
+	                        watchKey.reset();
+	                    }
+	                }
+					return totalEventCount;
+	            }
+	        });
+	    }
+
+	 private class WatchServiceRegisteringVisitor extends SimpleFileVisitor<Path> {
+	     @Override
+	     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+	    	 
+	    	 if((dir.toString().contains("\\Fiction") || (dir.toString().contains("\\Poetry")))){
+	    		 dir.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+	    	 }
+	    	 return FileVisitResult.CONTINUE;
+	     }
+	 }
+
+}

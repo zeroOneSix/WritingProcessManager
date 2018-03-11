@@ -1,0 +1,29 @@
+package com.writing.management.WMP.GUI.model;
+
+import java.time.LocalDate;
+
+import com.writing.documents.WritingType;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
+public class FinalizedDraftModel extends WritingPieceModel {
+	
+	private ObjectProperty<LocalDate> lastModified;
+
+	public FinalizedDraftModel(String writingPieceName, WritingType writingPieceType) {
+		super(writingPieceName, writingPieceType);
+		// TODO Auto-generated constructor stub
+	}
+	public FinalizedDraftModel(String writingPieceName, LocalDate lastModified, WritingType writingType) {
+		super(writingPieceName, writingType);
+		this.lastModified = new SimpleObjectProperty<LocalDate>(lastModified);
+	}
+	public ObjectProperty<LocalDate> getLastModified() {
+		return lastModified;
+	}
+	public void setLastModified(ObjectProperty<LocalDate> lastModified) {
+		this.lastModified = lastModified;
+	}
+
+}

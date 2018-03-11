@@ -1,0 +1,30 @@
+package com.writing.documents;
+
+public class Draft {
+
+	private String workingTitle;
+	private String location;
+	private WritingPiece writingPiece;
+	
+	
+	public Draft(WritingPiece wp, String workingTitle, String location) {
+		this.writingPiece = wp;
+		this.workingTitle = workingTitle;
+		this.location = location;
+	}
+
+	public String getWorkingTitle() {
+		return workingTitle;
+	}
+	public void setWorkingTitle(String workingTitle) {
+		this.workingTitle = workingTitle;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	
+}

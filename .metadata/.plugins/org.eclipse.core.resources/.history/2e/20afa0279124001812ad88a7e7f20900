@@ -1,0 +1,53 @@
+package com.writing.Old;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.writing.documents.WritingPiece;
+
+
+public class Registry {
+
+	private static Map<String, WritingPiece> writingReg;
+	
+	public Registry() {
+		this.writingReg = new HashMap<String, WritingPiece>();		
+	}
+	
+	
+	public static boolean update(WritingPiece wp) {
+		System.out.println("Adding " + wp.getName() + " to registry...");
+		if(!writingReg.containsKey(wp.getName())) {
+			writingReg.put(wp.getName(), wp);
+			System.out.println(wp.getName() + " added successfully");
+			return true;
+		}else {
+			System.out.println(wp.getName() + " not added. A piece with this name already exists in the registry");
+			return false;
+		}
+	}
+	
+	public static boolean change(WritingPiece wp) {
+		//TODO Check that this is the correct implementation
+		writingReg.replace(wp.getName(), wp);
+		return true;
+	}
+	public static boolean delete(WritingPiece wp) {
+		if(writingReg.containsKey(wp.getName())) {
+			writingReg.remove(wp.getName());
+			return true;
+		}else {
+			return false;
+		}
+	}
+	public static WritingPiece getWritingPiece(String key) {
+		return writingReg.get(key);
+	}
+	
+	public static Map<String, WritingPiece> getWritingReg(){
+		return writingReg;
+	}
+	
+	
+	
+}

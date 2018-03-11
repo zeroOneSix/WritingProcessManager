@@ -1,0 +1,58 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WPM.events.submissions.DraftToReadyForSubmissionEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+import com.writing.registry.WritingPieceRegistry;
+
+public abstract class DocumentDraftToReadyForSubmissionSubscriber {
+	
+	WritingPiece wp;
+	Path writingPieceToMove;
+
+	@Subscribe
+	public void readyForSubmission(DraftToReadyForSubmissionEvent event) {
+		this.wp = event.getWritingPiece();
+		this.writingPieceToMove = event.getWritingPieceToMove();
+		moveWritingPiece();
+	}
+	
+	public void moveWritingPiece(){
+		try {
+			String writingPieceName = wp.getName();
+			Path targetLocation;
+			if(wp.getWritingType() == WritingType.FICTION) {
+				targetLocation = Paths.get(DirectoryLocations.getFictionDocumentsForSubmissionFolder());
+
+			}else {
+				targetLocation = Paths.get(DirectoryLocations.getPoetryDocumentsForSubmissionFolder());
+			}
+			if(targetLocation != null) {
+				String newWritingPieceLocationStr = targetLocation.toString() + "\\" + writingPieceName +".docx";
+				Path newWritingPieceLocation = Paths.get(newWritingPieceLocationStr);
+				Files.copy(writingPieceToMove,newWritingPieceLocation);
+			}else {
+				throw new IOException("failed to find the target folder for " + writingPieceName);
+			}		
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void moveDraftFolderToWritingLibrary() {
+		
+	}
+	
+	public void updateWritingPiece() {
+		wp.setPath(writingPieceToMove);
+		wp.setStatus(Status.READY_FOR_SUBMISSION);
+		WritingPieceRegistry.updateWritingPiece(wp);
+	}
+}

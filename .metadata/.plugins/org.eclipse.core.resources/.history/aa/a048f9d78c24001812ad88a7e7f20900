@@ -1,0 +1,94 @@
+package com.writing.management.WPM.registry;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bson.BsonDocument;
+import org.bson.BsonString;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.writing.documents.WPMDocument;
+import com.writing.management.WPM.registry.WPMDocuments.Submission;
+import com.writing.management.WPM.registry.WPMDocuments.SubmittedResponse;
+import com.writing.management.WPM.registry.WPMDocuments.WritingPiece;
+import com.writing.management.WPM.registry.WPMDocuments.factory.SubmissionFactory;
+import com.writing.management.tool.WPMTools.MongoDbSettings;
+
+public class SubmissionRegistry extends Registry {
+	
+	private static MongoDatabase database;
+	
+	public SubmissionRegistry(MongoDatabase database) {
+		this.database = database;
+	}
+	
+	public static void insert(Submission submission) {
+		MongoCollection<Document> collection = database.getCollection(MongoDbSettings.getSUBMISSIONS_COLLECTION());
+		WritingPieceRegistry.insert(submission.getPieceSubmitted());
+		
+		if (exists(collection, submission)){
+			System.out.println(submission.getSubmissionName() + " already exists in Submissions Registry");
+		}else{
+			System.out.println(" Adding new record to Submissions Registry: " + submission.getSubmissionName() + " " + submission.getSubmissionLocation());
+			String id = submission.getSubmissionName();
+			ObjectId writingPieceSubmittedID = getSubmittedPieceID(submission);
+			if(writingPieceSubmittedID == null) {
+				try {
+					throw new Exception();
+				} catch (Exception e) {
+					System.out.println("No ID for: " + submission.getPieceSubmitted() + " found!");
+					e.printStackTrace();
+				}
+			}
+			String subStatus = submission.getSubmittedResponse().toString();
+			Document newSubmission = new Document("id", id)
+					.append("writingPieceID", writingPieceSubmittedID)
+					.append("submissionName", submission.getSubmissionName())
+					.append("status", subStatus)
+					.append("path", submission.getSubmissionLocation());
+			
+			collection.insertOne(newSubmission);
+			}
+	}
+	
+	private static ObjectId getSubmittedPieceID(Submission submission) {
+		MongoCollection<Document> writingPieceCollection = database.getCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+		FindIterable<Document> document = writingPieceCollection.find(new BsonDocument("name", new BsonString(submission.getPieceSubmitted().getName())));
+		Document MDWritingPiece = document.first();
+		ObjectId ID = (ObjectId) MDWritingPiece.get("id");
+		MongoCursor<Document> iterator = document.iterator();
+		return ID;
+		
+	}
+	private static boolean exists(MongoCollection<Document> collection, Submission submission) {
+		System.out.println(submission.getSubmissionLocation());
+		long count = collection.count(new BsonDocument("path", new BsonString(submission.getSubmissionLocation())));
+		if(count > 0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	public static Set<Submission> getAllSubmittedItemsByResponse(SubmittedResponse response) {
+		Set<Submission> submittedPieces = new HashSet<Submission>();
+		MongoCollection<Document> collection = database.getCollection(MongoDbSettings.getSUBMISSIONS_COLLECTION());
+		FindIterable<Document> iterDoc = collection.find(new BsonDocument("status", new BsonString(response.toString())));
+		MongoCursor<Document> iterator = iterDoc.iterator();
+		while(iterator.hasNext()) {
+			Document d = iterator.next();
+			String id = d.get("id").toString();
+			WritingPiece wp = WritingPieceRegistry.getWritingPieceByObjectID(d.getObjectId("writingPieceID"));
+			Submission submission = SubmissionFactory.create(d.get("submissionName").toString(), d.get("status").toString(),id, wp);
+			submittedPieces.add(submission);
+		}
+		return submittedPieces;
+	}
+
+	
+}

@@ -1,0 +1,19 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Submission;
+import com.writing.documents.WritingPiece;
+import com.writing.management.WPM.events.submissions.DocumentSubmissionAcceptedEvent;
+
+public abstract class DocumentSubmissionAcceptedSubscriber {
+	
+	private Submission submission;
+	private WritingPiece wp;
+	@Subscribe
+	public void acceptSubmission(DocumentSubmissionAcceptedEvent event) {
+		this.submission = event.getSubmission();
+		this.wp = submission.getPieceSubmitted();
+	}
+	
+	
+}

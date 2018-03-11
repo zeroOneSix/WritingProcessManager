@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.writing.management.WMP.GUI.view.DraftDisplayController">
+   <children>
+      <TableView fx:id="draftDisplayTable" prefHeight="532.0" prefWidth="812.0">
+        <columns>
+          <TableColumn fx:id="writingNameColumn" prefWidth="411.0" text="Name" />
+          <TableColumn fx:id="writingTypeColumn" prefWidth="398.0" text="Type" />
+        </columns>
+      </TableView>
+      <Button layoutX="353.0" layoutY="541.0" mnemonicParsing="false" onAction="#handleFinalizeDraftEvent" text="Finalise Draft" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,78 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WPM.events.submissions.DraftToReadyForSubmissionEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public abstract class DocumentDraftToReadyForSubmissionSubscriber {
+
+	@Subscribe
+	public void readyForSubmission(DraftToReadyForSubmissionEvent event) {
+		WritingPiece wp = event.getWritingPiece();
+		Path writingPieceToMove = event.getWritingPieceToMove();
+		
+		try {
+			String writingPieceName = wp.getName();
+			Path targetLocation;
+			if(wp.getWritingType() == WritingType.FICTION) {
+				targetLocation = Paths.get(DirectoryLocations.getFictionDocumentsForSubmissionFolder()());
+
+			}else {
+				targetLocation = Paths.get(DirectoryLocations.getPoetryDocumentsForSubmissionFolder());
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	private String[] copyFinalFile(Path submittedFile, String magazineName) {
+		
+		Date date = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		String dateFormatted = dateFormat.format(date);
+		String dirName = dateFormatted + magazineName;
+		String submittedDir = DirectoryLocations.getSubmittedFictionDocumentsFolder();
+		String newDir = submittedDir + "\\" + dirName;
+		
+		try {
+			if(!Paths.get(newDir).toFile().exists()) {
+				Path createdDir = Files.createDirectories(Paths.get(newDir));
+				if(createdDir.toFile().exists()) {
+				String target = createdDir.toString() + "\\"+ submittedFile.toFile().getName();
+				Files.copy(submittedFile, Paths.get(target));
+				}else {
+				throw new IOException("Directory wasnt created");
+					}
+				}
+			}catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String [] dirs = {dirName, newDir};
+		return dirs;
+
+	}
+}

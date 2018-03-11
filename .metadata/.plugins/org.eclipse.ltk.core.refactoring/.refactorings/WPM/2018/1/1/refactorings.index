@@ -1,0 +1,8 @@
+1514909950770	Rename type 'App'
+1515172176025	Rename enum constant 'DOCUMENTS_FOR_SUBMISSION'
+1515173609580	Rename type 'DraftToSubmissionEvent'
+1515173625611	Rename type 'FictionDraftToSubmissionEvent'
+1515173638906	Rename type 'PoetryDraftToSubmissionEvent'
+1515173733866	Rename type 'DocumentDraftToSubmissionSubscriber'
+1515173745413	Rename type 'FictionDraftToSubmissionSubscriber'
+1515173763857	Rename type 'PoetryDraftToSubmissionSubscriber'

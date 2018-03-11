@@ -1,0 +1,12 @@
+package com.writing.management.WPM.events.submissions;
+
+import java.nio.file.Path;
+
+import com.writing.documents.WritingPiece;
+
+public class FictionDraftToReadyForSubmissionEvent extends DraftToReadyForSubmissionEvent {
+	public FictionDraftToReadyForSubmissionEvent(WritingPiece wp, Path writingPieceToMovePath) {
+		super(wp);
+		super.setPieceToMove(writingPieceToMovePath);
+	}
+}

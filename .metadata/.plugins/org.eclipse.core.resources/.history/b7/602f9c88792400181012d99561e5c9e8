@@ -1,0 +1,6 @@
+package com.writing.mangement.WPM.install.traverse;
+
+public class ScanReviewDirectory extends ScanWritingPieceDirectory{
+}
+	
+	

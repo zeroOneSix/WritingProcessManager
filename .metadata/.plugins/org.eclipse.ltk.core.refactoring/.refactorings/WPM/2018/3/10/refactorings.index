@@ -1,0 +1,49 @@
+1520704785827	Move compilation unit
+1520704797814	Move compilation units
+1520704874617	Move compilation units
+1520705041065	Move compilation units
+1520705054150	Delete element
+1520705074136	Delete element
+1520705081404	Delete element
+1520705090158	Delete element
+1520705115688	Move compilation unit
+1520705698816	Move compilation unit
+1520705715212	Delete element
+1520705761454	Move compilation unit
+1520705778648	Move compilation unit
+1520705788673	Delete element
+1520705948701	Move compilation units
+1520705962205	Move compilation units
+1520705984716	Move compilation units
+1520706004425	Move compilation units
+1520706016595	Move compilation units
+1520706038037	Move compilation units
+1520706057977	Delete element
+1520706067481	Delete element
+1520706161517	Delete element
+1520706182932	Delete element
+1520706218490	Move compilation units
+1520706230778	Delete element
+1520706243741	Move compilation unit
+1520706262891	Move compilation unit
+1520706476300	Rename package 'com.writing.management.WPM'
+1520706531613	Delete element
+1520706648961	Delete element
+1520706657791	Delete element
+1520707126266	Rename type 'WPEvent'
+1520714608986	Rename local variable 'path'
+1520714750554	Rename method 'setPieceToMove'
+1520717106458	Delete elements
+1520717117775	Delete element
+1520717122839	Delete element
+1520717675690	Delete elements
+1520721818886	Delete element
+1520721824262	Delete element
+1520726043765	Rename type 'DocumentSubmissionToPublishedSubscriber'
+1520726057375	Rename type 'DocumentSubmissionAccepted'
+1520726086051	Rename type 'FictionSubmissionToPublishedSubscriber'
+1520726098698	Rename type 'PoetryToSubmissionToPublishedSubscriber'
+1520727504623	Rename method 'getDbID'
+1520727671601	Delete element
+1520727679745	Delete element
+1520728130328	Delete elements

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="422.0" prefWidth="949.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.writing.management.WMP.GUI.view.ReviewDisplayController">
+   <children>
+      <TableView fx:id="reviewDisplayTable" layoutX="4.0" prefHeight="362.0" prefWidth="945.0">
+        <columns>
+          <TableColumn fx:id="writingNameColumn" prefWidth="558.0" text="Name" />
+          <TableColumn fx:id="writingTypeColumn" prefWidth="377.0" text="Type" />
+        </columns>
+      </TableView>
+      <Button layoutX="442.0" layoutY="371.0" mnemonicParsing="false" onMouseClicked="#handMoveToDrafts" text="Move To Drafts" />
+   </children>
+</AnchorPane>

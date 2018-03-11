@@ -1,0 +1,103 @@
+package com.writing.management.WMP.GUI.view;
+
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WMP.GUI.MainApp;
+import com.writing.management.WMP.GUI.lookups.ItemLookup;
+import com.writing.management.WMP.GUI.model.ReviewModel;
+import com.writing.management.WPM.eventController.EventFactory;
+import com.writing.registry.WritingPieceRegistry;
+
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+
+public class ReviewDisplayController {
+	
+	@FXML
+	private TableView<ReviewModel> reviewDisplayTable;
+	@FXML
+	private TableColumn<ReviewModel, String> writingNameColumn;
+    @FXML
+    private TableColumn<ReviewModel, String> writingTypeColumn;
+
+	private Stage reviewSiteStage;
+	
+	//Reference to the Main Application
+	private MainApp mainApp;
+	
+	public ReviewDisplayController() {
+	}
+	
+	/**
+     * Initializes the controller class. The method
+     * is automatically called after the fxml file
+     * has been loaded
+     */
+    @FXML
+    private void initialize() {
+    	writingNameColumn.setCellValueFactory(cellData -> cellData.getValue().getWritingPieceName());
+    	writingTypeColumn.setCellValueFactory(cellData -> cellData.getValue().getWritingPieceTypeAsStringProperty());
+    	//TODO add a listener (see PersonOverview Controller) to update table for new Review Items added
+    }
+    
+    public void setMainApp(MainApp mainApp) {
+    	this.mainApp = mainApp;
+    	//Add the items from review to Table
+    	reviewDisplayTable.setItems(getItems());
+    	
+    }
+	public void handMoveToDrafts() {
+		//TODO ERROR CHECKING AND HANDLING ROLLSBACKS WITH EXCEPTIONS
+		ReviewModel reviewModel = reviewDisplayTable.getSelectionModel().getSelectedItem();
+		try {
+			if(reviewModel != null) {
+				WritingPiece wp = WritingPieceRegistry.getWritingPieceByID(reviewModel.getDbIDAsString());
+				if(reviewModel.getWritingPieceTypeAsEnum().equals(WritingType.POEM)) {
+					mainApp.postEvent(EventFactory.getPoetryDocumentToDraftEvent(wp));
+					//Remove moved item from list
+			    	int selectedIndexFiction = reviewDisplayTable.getSelectionModel().getSelectedIndex();
+			    	if(selectedIndexFiction >= 0) {
+			        	reviewDisplayTable.getItems().remove(selectedIndexFiction);
+			    	}
+				}else if(reviewModel.getWritingPieceTypeAsEnum().equals(WritingType.FICTION)) {
+					mainApp.postEvent(EventFactory.getFictionDocumentToDraftEvent(wp));
+					//Remove moved item from list
+			    	int selectedIndexPoetry = reviewDisplayTable.getSelectionModel().getSelectedIndex();
+			    	if(selectedIndexPoetry >= 0) {
+			        	reviewDisplayTable.getItems().remove(selectedIndexPoetry);
+			    	}
+				}else {
+					throw new Exception();
+				}
+			//TODO Handle the process of moving the selected item to drafts
+			}else {
+	    			//Nothing Selected
+	    			Alert alert = new Alert(AlertType.WARNING);
+	    			alert.initOwner(mainApp.getPrimaryStage());
+	    			alert.setTitle("No Selection");
+	    			alert.setHeaderText("No Review Piece Selected");
+	    			alert.setContentText("Please select an item from the table.");
+	    			alert.showAndWait();
+			}
+			
+		}catch (Exception e){
+			System.out.println("Selected Item could not be moved to drafts");
+			e.printStackTrace();
+		}
+		
+	}
+	public void setReviewDisplayStage(Stage reviewSiteStage) {
+		this.reviewSiteStage = reviewSiteStage;	
+	}
+	private ObservableList<ReviewModel> getItems(){
+		ObservableList<ReviewModel> reviewModels = (ObservableList<ReviewModel>) ItemLookup.getItems(Status.DOCUMENT_FOR_REVIEW);
+		return reviewModels;
+	}
+
+}

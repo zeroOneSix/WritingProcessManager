@@ -1,0 +1,23 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+
+import com.writing.documents.Submission;
+import com.writing.management.WPM.submission.event.PoetrySubmissionRejectedEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public class PoetrySubmissionRejectedSubscriber extends DocumentSubmissionRejectedSubscriber {
+	
+	public void rejected(PoetrySubmissionRejectedEvent event) {
+		Submission submission = event.getSubmission();
+		String baseTargetDir = DirectoryLocations.getRjectedSubmissionPoetryFolder();
+		try {
+			rejectedSubmission(submission, baseTargetDir);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+}

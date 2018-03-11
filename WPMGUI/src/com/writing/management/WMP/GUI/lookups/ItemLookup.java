@@ -1,0 +1,56 @@
+package com.writing.management.WMP.GUI.lookups;
+
+import java.util.Set;
+
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.management.WMP.GUI.model.DraftModel;
+import com.writing.management.WMP.GUI.model.ReadyForSubmissionModel;
+import com.writing.management.WMP.GUI.model.ReviewModel;
+import com.writing.management.WMP.GUI.model.WritingPieceModel;
+import com.writing.registry.WritingPieceRegistry;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+public class ItemLookup {
+	
+	public static ObservableList<? extends WritingPieceModel> getItems(Status status) {
+		
+		return WritingPieceToWritingPieceModelConverter(getReviewItemsFromDB(status), status);
+	}
+	
+	private static ObservableList<WritingPieceModel> WritingPieceToWritingPieceModelConverter(Set<WritingPiece> writingPieces, Status status) {
+		//TODO find a better way of deciding which type should be instantiated
+		ObservableList<WritingPieceModel> writingPieceModelList = FXCollections.observableArrayList();
+		try {
+			if(status.equals(Status.DOCUMENT_FOR_DRAFTING)) {
+				for(WritingPiece writingPiece : writingPieces) {
+					WritingPieceModel draftModel = new DraftModel(writingPiece.getName(), writingPiece.getWritingType(), writingPiece.getdbID());
+					writingPieceModelList.add(draftModel);
+				}
+			}else if(status.equals(Status.DOCUMENT_FOR_REVIEW)) {
+				for(WritingPiece writingPiece : writingPieces) {
+					WritingPieceModel reviewModel = new ReviewModel(writingPiece.getName(), writingPiece.getWritingType(), writingPiece.getdbID());
+					writingPieceModelList.add(reviewModel);
+				}
+			}else if(status.equals(Status.READY_FOR_SUBMISSION)) {
+				for(WritingPiece writingPiece : writingPieces) {
+					WritingPieceModel readyForSubmissionModel = new ReadyForSubmissionModel(writingPiece.getName(), writingPiece.getWritingType(), writingPiece.getdbID());
+					writingPieceModelList.add(readyForSubmissionModel);
+				}
+			}
+			else {
+				throw new Exception("Wrong Status is set");
+			}
+			return writingPieceModelList;
+		}catch(Exception e){
+			e.printStackTrace();
+			return writingPieceModelList;
+		}
+	}
+	private static Set<WritingPiece> getReviewItemsFromDB(Status status) {
+		//Lookup database via WritingPiece Registry and return a set of writing piece objects
+		return WritingPieceRegistry.getItemsByStatus(status);
+	}
+}

@@ -1,0 +1,26 @@
+package com.writing.Old;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.writing.documents.Submission;
+
+public class RejectedRegistry {
+private static Set<Submission> rejectedReg;
+	
+	public RejectedRegistry() {
+		rejectedReg = new HashSet<Submission>();
+	}
+	public static boolean addToRegistry(Submission s) {
+		if(rejectedReg.contains(s)) {
+			System.out.println(s + " is already in rejected Reg");
+			return false;
+		}else {
+			rejectedReg.add(s);
+			return true;
+		}
+	}
+	public static Set<Submission> getSubmissionRegistry(){
+		return rejectedReg;
+	}
+}

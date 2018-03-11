@@ -1,0 +1,14 @@
+INDEX VERSION 1.130+C:\Users\stephencuthbertson\OneDrive\Development\Java\WritingProcessManager\.metadata\.plugins\org.eclipse.jdt.core
+3765091420.index
+2075801418.index
+172257679.index
+3716843466.index
+2291333990.index
+1350895742.index
+338354581.index
+1468607185.index
+2229723321.index
+3260543747.index
+3282321072.index
+1351002744.index
+1293719679.index

@@ -1,0 +1,27 @@
+package com.writing.Old;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.writing.documents.WritingPiece;
+
+public class DraftRegistry {
+private static Set<WritingPiece> draftReg;
+	
+	public DraftRegistry() {
+		draftReg = new HashSet<WritingPiece>();
+	}
+	public static boolean addToRegistry(WritingPiece wp) {
+		if(draftReg.contains(wp)) {
+			System.out.println(wp + " is already in submission Reg");
+			return false;
+		}else {
+			draftReg.add(wp);
+			return true;
+		}
+	}
+	public static Set<WritingPiece> getSubmissionRegistry(){
+		return draftReg;
+	}
+
+}

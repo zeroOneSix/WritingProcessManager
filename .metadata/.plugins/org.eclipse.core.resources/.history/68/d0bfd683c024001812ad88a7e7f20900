@@ -1,0 +1,37 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.documents.Submission;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WPM.events.submissions.DocumentSubmissionAcceptedEvent;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public abstract class DocumentSubmissionAcceptedSubscriber {
+	
+	private Submission submission;
+	private WritingPiece wp;
+	@Subscribe
+	public void acceptSubmission(DocumentSubmissionAcceptedEvent event) {
+		this.submission = event.getSubmission();
+		this.wp = submission.getPieceSubmitted();
+	}
+	
+	private void moveSubmission() {
+		String targetDirLocation;
+		if(wp.getWritingType() == WritingType.FICTION) {
+			targetDirLocation = DirectoryLocations.getSubmittedFictionDocumentsFolder();
+		}else {
+			targetDirLocation = DirectoryLocations.getSubmittedPoetryDocumentsFolder();
+		}
+		String targetLocation = targetDirLocation + "\\" + submission.getSubmissionName();
+		FileUtils.moveDirectory(Paths.get(submission.getSubmissionLocation()).toFile()),Paths.get(targetLocation).toFile());
+		
+		
+	}
+	
+}

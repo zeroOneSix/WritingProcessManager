@@ -1,0 +1,82 @@
+package com.writing.mangement.WPM.install;
+
+import com.writing.management.WPM.registry.SubmissionRegistry;
+import com.writing.management.WPM.registry.WritingPieceRegistry;
+import com.writing.management.WPM.registry.WPMDocuments.Status;
+import com.writing.management.WPM.registry.WPMDocuments.SubmittedResponse;
+import com.writing.management.WPM.registry.mongoDb.CreateDatabase;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+import com.writing.management.tool.WPMTools.MongoDbSettings;
+import com.writing.mangement.WPM.install.traverse.Submissions.ScanPublicationDirectory;
+import com.writing.mangement.WPM.install.traverse.Submissions.ScanRejectedPublicationDirectory;
+import com.writing.mangement.WPM.install.traverse.Submissions.ScanSubmittedDocumentsDirectory;
+import com.writing.mangement.WPM.install.traverse.writingPieces.ScanDraftDirectory;
+import com.writing.mangement.WPM.install.traverse.writingPieces.ScanForSubmissionDirectory;
+import com.writing.mangement.WPM.install.traverse.writingPieces.ScanReviewDirectory;
+
+/**
+ * The base class for the installation of the WPM
+ *
+ */
+public class Install 
+{
+    public static void main( String[] args )
+    {
+    	//SETUP DATABASE
+    	CreateDatabase database = new CreateDatabase(
+    			MongoDbSettings.getHOST(), 
+    			MongoDbSettings.getPORT(), 
+    			MongoDbSettings.getUSERNAME(), 
+    			MongoDbSettings.getPASSWORD(),
+    			MongoDbSettings.getDB_NAME());
+    	
+    		//Create Writing Piece Collection
+    	database.createCollection(MongoDbSettings.getWRITING_PIECE_COLLECTION());
+    		//Create Submission Collection
+    	database.createCollection(MongoDbSettings.getSUBMISSIONS_COLLECTION());
+    	
+    	//SETUP REGISTRIES
+    		//Writing Piece Reg
+    	WritingPieceRegistry writingReg = new WritingPieceRegistry(CreateDatabase.getMongoDatabase());
+    	SubmissionRegistry subReg = new SubmissionRegistry(CreateDatabase.getMongoDatabase());
+    	
+    	//TRAVERSE DIRECTORIES FOR EXISTING PIECES
+    	//Traverse the DOCUMENTS_FOR_REVIEW directory for existing pieces
+    	ScanReviewDirectory scanReviewDir = new ScanReviewDirectory();
+    		//Fiction
+    	scanReviewDir.traverse(DirectoryLocations.getDocumentsForReviewFiction(),Status.DOCUMENT_FOR_REVIEW);
+    			//Poetry
+    	scanReviewDir.traverse(DirectoryLocations.getDocumentsForReviewPoetry(), Status.DOCUMENT_FOR_REVIEW);
+    		//Traverse the DOCUMENTS_FOR_DRAFTING directory for existing pieces
+    	ScanDraftDirectory scanDraftDir = new ScanDraftDirectory();
+    		//Fiction
+    	scanDraftDir.traverse(DirectoryLocations.getDocumentsForDraftingFiction(), Status.DOCUMENT_FOR_DRAFTING);
+    		//Poetry
+    	scanDraftDir.traverse(DirectoryLocations.getDocumentsForDraftingPoetry(), Status.DOCUMENT_FOR_DRAFTING);
+    	//Traverse the DOCUMENTS_FOR_SUBMISSON directory for existing pieces
+    	ScanForSubmissionDirectory scanForSubDir = new ScanForSubmissionDirectory();	
+    		//Fiction
+    	scanForSubDir.traverse(DirectoryLocations.getFictionDocumentsForSubmissionFolder(), Status.READY_FOR_SUBMISSION);
+    		//Poetry
+    	scanForSubDir.traverse(DirectoryLocations.getPoetryDocumentsForSubmissionFolder(), Status.READY_FOR_SUBMISSION);
+    	
+    	//Traverse SUBMITTED_DOCUMENTS directory for existing pieces
+    	ScanSubmittedDocumentsDirectory scanSubmittedDocsDir = new ScanSubmittedDocumentsDirectory(DirectoryLocations.getSubmittedFictionDocumentsFolder(), DirectoryLocations.getSubmittedPoetryDocumentsFolder());
+    		//Fiction
+    	scanSubmittedDocsDir.traverse(DirectoryLocations.getSubmittedFictionDocumentsFolder(), Status.DOCUMENTS_SUBMITTED, SubmittedResponse.PENDING);
+    		//Poetry
+    	scanSubmittedDocsDir.traverse(DirectoryLocations.getSubmittedPoetryDocumentsFolder(), Status.DOCUMENTS_SUBMITTED, SubmittedResponse.PENDING);
+    	//Traverse the DOCUMENTS_FOR_PUBLICATION directory for existing pieces
+    	ScanPublicationDirectory scanPubsDocDir = new ScanPublicationDirectory(DirectoryLocations.getPublishedFictionFolder(), DirectoryLocations.getPublishedPoetryFolder());
+    		//Fiction
+    	scanPubsDocDir.traverse(DirectoryLocations.getPublishedFictionFolder(), Status.DOCUMENTS_PUBLISHED, SubmittedResponse.ACCEPTED);
+    		//Poetry
+    	scanPubsDocDir.traverse(DirectoryLocations.getPublishedPoetryFolder(), Status.DOCUMENTS_PUBLISHED, SubmittedResponse.ACCEPTED);
+    	//Traverse the REJECTED_SUBMISSIONS directory for existing pieces
+    	ScanRejectedPublicationDirectory scanRejDocsDir = new ScanRejectedPublicationDirectory(DirectoryLocations.getRejectedSubmissionFictionFolder(), DirectoryLocations.getRjectedSubmissionPoetryFolder());
+    		//Fiction
+    	scanRejDocsDir.traverse(DirectoryLocations.getRejectedSubmissionFictionFolder(), Status.DOCUMENTS_PUBLISHED, SubmittedResponse.ACCEPTED);
+    		//Poetry
+    	scanRejDocsDir.traverse(DirectoryLocations.getDocumentsForDraftingPoetry(), Status.REJECTED_SUMBISSON, SubmittedResponse.REJECTED);
+    }
+}

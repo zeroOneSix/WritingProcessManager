@@ -1,0 +1,30 @@
+package com.writing.mangement.WPM.install.traverse.Submissions;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.writing.Old.PublishedRegistry;
+import com.writing.management.WPM.registry.SubmissionRegistry;
+import com.writing.management.WPM.registry.WPMDocuments.Status;
+import com.writing.management.WPM.registry.WPMDocuments.Submission;
+import com.writing.management.WPM.registry.WPMDocuments.SubmittedResponse;
+import com.writing.management.WPM.registry.WPMDocuments.WritingPiece;
+import com.writing.management.WPM.registry.WPMDocuments.factory.SubmissionFactory;
+import com.writing.management.WPM.registry.WPMDocuments.factory.WritingPieceFactory;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public class ScanPublicationDirectory extends ScanSubmissionDirectory{
+	
+	public ScanPublicationDirectory(String subFictionDir, String subPoetryDir) {
+		super.subDirFiction = subFictionDir;
+		super.subDirPoetry = subPoetryDir;
+	}
+		<>
+}

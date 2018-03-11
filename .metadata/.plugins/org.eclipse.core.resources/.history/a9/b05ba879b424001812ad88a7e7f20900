@@ -1,0 +1,13 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.management.WPM.events.submissions.FictionNewSubmissionEvent;
+
+public class FictionNewSubmissionSubscriber extends DocumentNewSubmissionSubscriber {
+	
+	@Subscribe
+	public void createNewSubmission(FictionNewSubmissionEvent event) {
+		create(event.getSubmission());
+	}
+
+}

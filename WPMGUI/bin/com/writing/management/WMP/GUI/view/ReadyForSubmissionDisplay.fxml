@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.writing.management.WMP.GUI.view.ReadyForSubmissionDisplayController">
+   <children>
+      <TableView fx:id="readyForSubmissionDisplayTable" prefHeight="488.0" prefWidth="800.0">
+        <columns>
+          <TableColumn fx:id="writingNameColumn" prefWidth="433.0" text="Name" />
+          <TableColumn fx:id="writingTypeColumn" prefWidth="366.0" text="Type" />
+        </columns>
+      </TableView>
+      <Button layoutX="312.0" layoutY="517.0" mnemonicParsing="false" onAction="#handleCreateNewSubmissionEvent" text="Create New Submission" />
+   </children>
+</AnchorPane>

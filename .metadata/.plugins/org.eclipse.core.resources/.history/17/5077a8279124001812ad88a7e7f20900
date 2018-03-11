@@ -1,0 +1,82 @@
+package com.writing.Old;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+
+import com.writing.documents.Status;
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+import com.writing.management.tool.WPMTools.FileManagementTools;
+
+public class SubmissionProcess {
+	
+	public void rejectSubmission(Submission s) throws IOException {
+		s.setSubmittedResponse(SubmittedResponse.REJECTED);
+		String baseTargetDir;
+		if(s.getPieceSubmitted().getWritingType().equals(WritingType.FICTION)) {
+			baseTargetDir = DirectoryLocations.getRejectedSubmissionFictionFolder();
+		}else {
+			baseTargetDir = DirectoryLocations.getRjectedSubmissionPoetryFolder();
+		}
+		String sourceDir = s.getSubmissionLocation();
+		String targetDir = moveSubmission(baseTargetDir, sourceDir);
+		s.setSubmissionLocation(targetDir);
+	}
+	public void acceptSubmission(Submission s) throws IOException {
+		s.setSubmittedResponse(SubmittedResponse.ACCEPTED);
+		String baseTargetDir;  
+		if(s.getPieceSubmitted().getWritingType().equals(WritingType.FICTION)) {
+			baseTargetDir = DirectoryLocations.getPublishedFictionFolder();
+		}else {
+			baseTargetDir = DirectoryLocations.getPublishedPoetryFolder();
+		}
+		String sourceDir = s.getSubmissionLocation();
+		String targetDir = moveSubmission(baseTargetDir, sourceDir);
+		s.setSubmissionLocation(targetDir);
+		//TODO create Text file with submission information
+	}
+	
+	public String moveSubmission(String baseTargetDir, String sourceDir) throws IOException{
+		final Path sourceDirPath = Paths.get(sourceDir);
+		final String targetDir = baseTargetDir + "\\" + sourceDirPath.toFile().getName();
+		final Path targetDirPath = Paths.get(targetDir);
+		try {
+			//Create Directory for Submission in target(either accepted or rejected dir)
+			if(!targetDirPath.toFile().exists()) {
+				Files.createDirectory(targetDirPath);
+			}else {
+				throw new IOException(targetDir + " already exists");
+			}
+			//Copy Files from Source Directory to newly created one
+			SimpleFileVisitor<Path> fv = new SimpleFileVisitor<Path>() {
+				 @Override
+			      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+			          throws IOException {	
+					 	String newFileLocation = targetDir + "\\" + file.getFileName();
+					 	Path newFileLocationPath = Paths.get(newFileLocation);
+					 	Files.copy(file, newFileLocationPath);	 
+					 	return FileVisitResult.CONTINUE;
+			      }
+			    };
+			    try {
+			    	Files.walkFileTree(sourceDirPath, fv);
+			    }catch(IOException e) {
+			    	e.printStackTrace();
+			    }
+			//Delete Submission Dir
+			FileManagementTools.removeRecursive(Paths.get(sourceDir));
+			}
+			catch (IOException e) {
+			e.printStackTrace();
+		}
+		return targetDir;
+	}
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="590.0" prefWidth="1097.0" style="-fx-background-color: CADETBLUE;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.writing.management.WMP.GUI.view.StartSiteController">
+   <children>
+      <Label alignment="CENTER" layoutX="24.0" layoutY="14.0" onMouseClicked="#handleReviewClickEvent" prefHeight="273.0" prefWidth="350.0" style="-fx-border-color: BLACK; -fx-text-fill: WHITE;" text="Review">
+         <font>
+            <Font name="Calibri Bold" size="64.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="24.0" layoutY="288.0" onMouseClicked="#handleDraftClickEvent" prefHeight="273.0" prefWidth="350.0" style="-fx-border-color: BLACK; -fx-text-fill: WHITE;" text="Drafts">
+         <font>
+            <Font name="Calibri Bold" size="64.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="374.0" layoutY="288.0" onMouseClicked="#handleSbumissionClickEvent" prefHeight="273.0" prefWidth="350.0" style="-fx-border-color: BLACK; -fx-text-fill: WHITE;" text="Submissions">
+         <font>
+            <Font name="Calibri Bold" size="64.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="724.0" layoutY="14.0" onMouseClicked="#handleSubmissionRejectedEvent" prefHeight="273.0" prefWidth="350.0" style="-fx-border-color: BLACK; -fx-text-fill: WHITE;" text="Rejected Submissions" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="Calibri Bold" size="64.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="724.0" layoutY="288.0" onMouseClicked="#handleSubmissionPublishedEvent" prefHeight="273.0" prefWidth="350.0" style="-fx-border-color: BLACK; -fx-text-fill: WHITE;" text="Published">
+         <font>
+            <Font name="Calibri Bold" size="64.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="374.0" layoutY="14.0" onMouseClicked="#handleDocumentsReadyForSubmissionEvent" prefHeight="273.0" prefWidth="350.0" style="-fx-border-color: BLACK; -fx-text-fill: WHITE;" text="Documents Ready For Submission" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="Calibri Bold" size="64.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

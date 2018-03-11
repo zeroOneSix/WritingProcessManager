@@ -1,0 +1,4 @@
+package com.writing.management.WPM.subscribers.drafts;
+
+public class PoetryToDraftSubscriber extends DocumentToDraftSubscriber {
+}

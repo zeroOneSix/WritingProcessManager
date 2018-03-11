@@ -1,0 +1,42 @@
+1514204996646	Rename method 'altWatcher'
+1514207621334	Rename type 'FileWalker'
+1514207881639	Rename method 'traverseReviewDirectory'
+1514220068720	Move compilation unit
+1514220111924	Move compilation units
+1514220143346	Move compilation units
+1514220166979	Move compilation unit
+1514220182026	Move compilation units
+1514220473357	Move compilation units
+1514220478873	Move compilation unit
+1514221497687	Rename type 'DraftingImpl'
+1514223215025	Delete element
+1514224148264	Move compilation unit
+1514227246840	Move compilation unit
+1514241872854	Rename field 'submissionReg'
+1514242665115	Move compilation unit
+1514376334345	Rename field 'submissionReg'
+1514376565217	Move compilation unit
+1514376577590	Delete element
+1514376586172	Move compilation unit
+1514377328680	Copy compilation unit
+1514377551176	Copy compilation unit
+1514377656329	Copy compilation unit
+1514377671723	Rename field 'publishedReg'
+1514638757384	Delete element
+1514638771867	Move compilation unit
+1514638793402	Rename package 'com.writing.management.WPM.database'
+1514639032801	Move compilation units
+1514639348620	Move compilation units
+1514639537973	Move compilation units
+1514655185256	Move compilation units
+1514655200796	Move compilation unit
+1514655324240	Move compilation unit
+1514655336205	Move compilation units
+1514655348870	Move compilation units
+1514655376488	Move compilation unit
+1514655385759	Move compilation unit
+1514725798796	Move package
+1514727183092	Move compilation unit
+1514727724902	Rename method 'getItems'
+1514738682136	Rename type 'WritingPiece'
+1514738932860	Rename type 'WritingPieceModel'

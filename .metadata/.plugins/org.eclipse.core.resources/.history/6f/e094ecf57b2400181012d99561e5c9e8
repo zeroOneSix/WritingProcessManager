@@ -1,0 +1,7 @@
+package com.writing.mangement.WPM.install.traverse;
+
+import com.writing.management.WPM.registry.WPMDocuments.Status;
+
+public interface ScanDirectory {
+	void traverse(String dir, Status status);
+}

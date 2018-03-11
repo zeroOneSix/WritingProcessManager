@@ -1,0 +1,18 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.management.tool.WPMTools.FileManagementTools;
+
+public abstract class DocumentSubmissionRejectedSubscriber {
+	
+	public void rejectedSubmission(Submission s, String baseTargetDir) throws IOException {
+		s.setSubmittedResponse(SubmittedResponse.REJECTED);
+		String sourceDir = s.getSubmissionLocation();
+		String targetDir = FileManagementTools.move(baseTargetDir, sourceDir);
+		s.setSubmissionLocation(targetDir);
+	}
+
+}

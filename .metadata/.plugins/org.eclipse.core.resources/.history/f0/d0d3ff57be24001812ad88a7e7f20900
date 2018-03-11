@@ -1,0 +1,22 @@
+package com.writing.management.WPM.subscribers.submissions;
+
+import java.io.IOException;
+
+import com.writing.documents.Submission;
+import com.writing.documents.SubmittedResponse;
+import com.writing.management.tool.WPMTools.FileManagementTools;
+
+public abstract class DocumentSubmissionAccepted {
+	
+	public void acceptSubmission(Submission s, String baseTargetDir) throws IOException {
+		s.setSubmittedResponse(SubmittedResponse.ACCEPTED);
+		String sourceDir = s.getSubmissionLocation();
+		String targetDir = FileManagementTools.move(baseTargetDir, sourceDir);
+		s.setSubmissionLocation(targetDir);
+		//TODO create Text file with submission information
+		//TODO create Published registy and add the accepted submission to it
+	}
+	
+	
+
+}

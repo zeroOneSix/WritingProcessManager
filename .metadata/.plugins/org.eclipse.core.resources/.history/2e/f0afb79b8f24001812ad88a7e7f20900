@@ -1,0 +1,14 @@
+package com.writing.management.WPM.submission.event.subscriber;
+
+import com.writing.documents.Submission;
+import com.writing.management.WPM.submission.event.FictionDraftToReadyForSubmissionEvent;
+
+public class FictionDraftToReadyForSubmissionSubscriber extends DocumentDraftToReadyForSubmissionSubscriber {
+	
+	public void movedDraftToSubmission(FictionDraftToReadyForSubmissionEvent event) {
+		processSubmission(event.getSubmission());
+		createSubmission(event.getSubmission());
+//		SubmissionRegistry.addToRegistry(submission);
+	}
+
+}

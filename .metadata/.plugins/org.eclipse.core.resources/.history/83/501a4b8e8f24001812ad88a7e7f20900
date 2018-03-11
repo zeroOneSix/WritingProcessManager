@@ -1,0 +1,18 @@
+package com.writing.management.WPM.Review.event.subcriber;
+
+import com.google.common.eventbus.Subscribe;
+import com.writing.Old.Registry;
+import com.writing.documents.Status;
+import com.writing.documents.WritingPiece;
+import com.writing.documents.WritingType;
+import com.writing.management.WPM.Review.event.NewFictionForReviewEvent;
+
+public class NewFictionReviewSubscriber {
+
+	@Subscribe
+	public void handleNewFictionPiece(NewFictionForReviewEvent event) {
+		System.out.println("New fiction piece found");	
+		WritingPiece newPiece = new WritingPiece(
+				event.getPath().toFile().getName(), Status.DOCUMENT_FOR_REVIEW, WritingType.FICTION, event.getPath());
+	}
+}

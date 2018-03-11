@@ -1,0 +1,51 @@
+package com.writing.management.WPM.submission.event.subscriber;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import com.writing.documents.Status;
+import com.writing.documents.Submission;
+import com.writing.management.WPM.registry.SubmissionRegistry;
+import com.writing.management.WPM.registry.WritingPieceRegistry;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+public abstract class DocumentNewSubmissionSubscriber {
+
+	private Submission submission;
+	
+	public void create(Submission submission) {
+		System.out.println("Creating New Submission!");
+		this.submission = submission;
+		moveDocument(submission);
+		WritingPieceRegistry.updateWritingPiece(submission.getPieceSubmitted());
+		System.out.println(submission.getSubmissionLocation());
+		SubmissionRegistry.insert(submission);
+	}
+	
+	private void moveDocument(Submission submission) {
+		String submittedDir = DirectoryLocations.getSubmittedFictionDocumentsFolder();
+		String newDir = submittedDir + "\\" + submission.getSubmissionName();
+		try {
+			//Checks to see if the Dir(for the submission) already exists
+			if(!Paths.get(newDir).toFile().exists()) {
+				Path createdDir = Files.createDirectories(Paths.get(newDir));
+				//TODO CHECK FOR DIRECTORY
+				String target = createdDir.toString() + "\\"+ submission.getPieceSubmitted().getName() + ".docx";
+				Path updatedPiecePath = Files.copy(submission.getPieceSubmitted().getPath(), Paths.get(target));
+				//Update the Writing Piece
+				//TODO Problem with the ability of having multiple submissions of the same doc
+				// But there is only one path location for the doc record in DB. 
+				submission.setSubmissionLocation(newDir);
+				submission.getPieceSubmitted().setPath(updatedPiecePath);
+				submission.getPieceSubmitted().setStatus(Status.DOCUMENTS_SUBMITTED);
+				}else {
+				throw new IOException("Directory wasnt created");
+					}
+				}catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}

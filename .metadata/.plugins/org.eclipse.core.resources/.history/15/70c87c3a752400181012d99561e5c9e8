@@ -1,0 +1,10 @@
+package com.writing.mangement.WPM.install.traverse;
+
+public class ScanReviewDirectory extends ScanWritingPieceDirectory{
+	public void traverse(String dir, Status status) {
+		super(dir, status);
+		// TODO Auto-generated method stub	
+	}
+}
+	
+	

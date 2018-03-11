@@ -1,0 +1,7 @@
+package com.writing.registry;
+
+import com.writing.documents.WPMDocument;
+
+public interface Registry {
+
+}

@@ -1,0 +1,104 @@
+package com.writing.management.WMP.GUI.view;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import com.writing.management.WMP.GUI.MainApp;
+import com.writing.management.WMP.GUI.model.DraftModel;
+import com.writing.management.WMP.GUI.model.FinalizedDraftModel;
+import com.writing.management.WPM.registry.WritingPieceRegistry;
+import com.writing.management.WPM.registry.WPMDocuments.WritingPiece;
+import com.writing.mangement.WPM.install.traverse.writingPieces.ScanForSubmissionDirectory;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.stage.Stage;
+
+public class FinalizeDraftDisplayController {
+	
+	@FXML
+	private TableView<FinalizedDraftModel> finalizeDraftDisplayTable;
+	@FXML
+	private TableColumn<FinalizedDraftModel, String> nameColumn;
+	@FXML
+	private TableColumn<FinalizedDraftModel, LocalDate> lastModColumn;
+	@FXML
+	private Label titleLabel;
+	
+	private MainApp mainApp;
+	private Stage finalizeDraftDisplayStage;
+	private DraftModel draftSelected;
+	
+	private boolean selected = false;
+	
+	
+	public FinalizeDraftDisplayController() {
+		
+	}
+	
+	public void initilize() {
+		
+		nameColumn.setCellValueFactory(cellData -> cellData.getValue().getWritingPieceName());
+		lastModColumn.setCellValueFactory(cellData -> cellData.getValue().getLastModified());
+	}
+	
+	public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+		finalizeDraftDisplayTable.setItems(getDrafts());
+		
+	}
+	public void setFinalizeDraftDisplayStage(Stage finalizeDraftDisplayStage) {
+		this.finalizeDraftDisplayStage = finalizeDraftDisplayStage;
+
+	}
+	
+	public void setDraftSelected(DraftModel draftSelected) {
+		this.draftSelected = draftSelected;
+		titleLabel.setText(draftSelected.getWritingPieceNameAsString());
+		System.out.println(finalizeDraftDisplayTable.getColumns());
+	
+	}
+	
+	public boolean selected() {
+		return selected;
+	}
+	
+	public ObservableList<FinalizedDraftModel> getDrafts(){
+		ObservableList<FinalizedDraftModel> drafts = FXCollections.observableArrayList();
+		
+		//Get A list of all documents in draft directory
+		WritingPiece wp = WritingPieceRegistry.getWritingPieceByID(draftSelected.getDbIDAsString());
+		Set<Path> allDrafts = ScanForSubmissionDirectory.traverse(wp.getPath());
+		for(Path p : allDrafts) {
+			System.out.println(p.toString());
+			LocalDate dateLastMod = Instant.ofEpochSecond(p.toFile().lastModified()).atZone(ZoneId.systemDefault()).toLocalDate();
+			FinalizedDraftModel draft = new FinalizedDraftModel(p.toFile().getName(),dateLastMod,wp.getWritingType());
+			drafts.add(draft);
+		}
+		System.out.println(drafts.size());
+		return drafts;
+	}
+	
+	
+	
+
+}

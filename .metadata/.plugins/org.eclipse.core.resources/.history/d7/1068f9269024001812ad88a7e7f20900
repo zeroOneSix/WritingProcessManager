@@ -1,0 +1,40 @@
+package com.writing.Test;
+
+import java.io.IOException;
+
+import com.google.common.eventbus.EventBus;
+import com.writing.management.WPM.Review.ReviewWatcherProvider;
+import com.writing.management.WPM.subscribers.review.NewFictionReviewSubscriber;
+import com.writing.management.WPM.subscribers.review.NewPoetryReviewSubscriber;
+import com.writing.management.tool.WPMTools.DirectoryLocations;
+
+import bbejeck.nio.files.directory.event.DirectoryEventWatcher;
+import bbejeck.nio.files.directory.event.DirectoryEventWatcherImpl;
+import bbejeck.nio.files.directory.event.DirectoryEventWatcherProvider;
+
+public class EventBusWatcherTest {
+	
+	public void testWatcher() {
+		
+		EventBus evBus = new EventBus();
+		String startPath = DirectoryLocations.getDocumentsForReviewFolder();
+		System.out.println("Starting File Watcher...");
+		NewFictionReviewSubscriber fictionReviewSubscriber = new NewFictionReviewSubscriber();
+		NewPoetryReviewSubscriber poetryReviewSubscriber = new NewPoetryReviewSubscriber();
+		evBus.register(poetryReviewSubscriber);
+		evBus.register(fictionReviewSubscriber);
+		
+		ReviewWatcherProvider dewp = new ReviewWatcherProvider(evBus, startPath);
+		DirectoryEventWatcher watch = dewp.get();	
+		
+		try {
+			watch.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+}
